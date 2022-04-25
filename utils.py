@@ -83,23 +83,10 @@ def load_data(lang,train_ratio = 0.3):
     alignment_pair = load_alignment_pair(lang + 'ref_ent_ids')
     np.random.shuffle(alignment_pair)
     train_pair,dev_pair = alignment_pair[0:int(len(alignment_pair)*train_ratio)],alignment_pair[int(len(alignment_pair)*train_ratio):]
-    #SI = get_word_embedding(lang)
     SI = load_lm(lang)
     entity_s = [e1 for e1, e2 in alignment_pair]
     entity_t = [e2 for e1, e2 in alignment_pair]
-#    number = len(alignment_pair)
     psedu_label = UBEA(entity_s,entity_t,SI)
-#    eval_entity = eval_entity_alignment(entity_s,entity_t,SI,number)
     adj_matrix,r_index,r_val,adj_features,rel_features = get_matrix(triples1+triples2,entity1.union(entity2),rel1.union(rel2))
-#    psedu_label = train_pair
     return np.array(alignment_pair),np.array(psedu_label),np.array(dev_pair),adj_matrix,np.array(r_index),np.array(r_val),adj_features,rel_features
 
-
-def get_word_embedding(lang):
-    print('adding the primal input layer...')
-    with open(file= lang +  'initial-node.json', mode='r', encoding='utf-8') as f:
-        embedding_list = json.load(f)
-        print(len(embedding_list), 'rows,', len(embedding_list[0]), 'columns.')
-    return embedding_list
-
-#load_data("data/zh_en/")
