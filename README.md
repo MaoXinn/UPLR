@@ -27,7 +27,7 @@ The datasets are from [GCN-Align](https://github.com/1049451037/GCN-Align), [JAP
 
 
 ## Running
-* unzip *data*
+* unzip *data.zip*
 * run *main.py*
 
 > Due to the instability of embedding-based methods, it is acceptable that the results fluctuate a little bit (±1%) when running code repeatedly.
