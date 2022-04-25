@@ -19,7 +19,7 @@ The datasets are from [GCN-Align](https://github.com/1049451037/GCN-Align), [JAP
 * Python = 3.6
 * Keras = 2.2.5
 * Tensorflow = 1.14.0
-* jupyter
+* Json
 * Scipy
 * Numpy
 * tqdm
