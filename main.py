@@ -12,7 +12,7 @@ from UBEA import*
 import tensorflow as tf
 import keras.backend as K
 from keras.layers import *
-from layer import Gate_GraphAttention
+from layer import Gate_GraphAttention,align_loss
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 os.environ["TF_CPP_MIN_LOG_LEVEL"]="2"
@@ -36,7 +36,7 @@ rel_size = rel_features.shape[1]
 triple_size = len(adj_matrix)
 node_hidden = 125
 rel_hidden = 125
-batch_size = 1024
+batch_size = 64
 dropout_rate = 0.3
 lr = 0.005
 gamma = 5.5
@@ -87,39 +87,8 @@ def train_model(node_hidden,rel_hidden,triple_size=triple_size,node_size=node_si
     out_feature = Dropout(dropout_rate)(out_feature)
                                   
     alignment_input = Input(shape=(None,2))
-                                  
-    def align_loss(tensor):
-        
-        def squared_dist(x):
-            A,B = x
-            row_norms_A = tf.reduce_sum(tf.square(A), axis=1)
-            row_norms_A = tf.reshape(row_norms_A, [-1, 1])  # Column vector.
-            row_norms_B = tf.reduce_sum(tf.square(B), axis=1)
-            row_norms_B = tf.reshape(row_norms_B, [1, -1])  # Row vector.
-            return row_norms_A + row_norms_B - 2 * tf.matmul(A, B,transpose_b=True)
-        def Gradient(loss):
-            gradient = (loss - K.stop_gradient(K.mean(loss,axis=-1,keepdims=True))) / K.stop_gradient(K.std(loss,axis=-1,keepdims=True))
-            losss = K.logsumexp(30*loss+10,axis=-1)
-            return losss
-        def Matrix(loss,l,r):
-            matrix = loss *(1 - K.one_hot(indices=l,num_classes=node_size) - K.one_hot(indices=r,num_classes=node_size))
-            return Gradient(matrix)
-        
-        
-        emb = tensor[1]
-        ps,pt = K.cast(tensor[0][0,:,0],'int32'),K.cast(tensor[0][0,:,1],'int32')
-        ps_emb,pt_emb = K.gather(reference=emb,indices=ps),K.gather(reference=emb,indices=pt)
-                                                                              
-        Lr = K.sum(K.square(ps_emb-pt_emb),axis=-1,keepdims=True)
-        Ls = squared_dist([ps_emb,emb])
-        Lt = squared_dist([pt_emb,emb])
-        LN1 = Lr - Ls + gamma
-        LN2 = Lr - Lt + gamma
-        
-        l_loss = Matrix(LN1,ps,pt)
-        r_loss = Matrix(LN2,ps,pt)
-        return K.mean(l_loss + r_loss)
-                                                                                                                          
+    
+    
     loss = Lambda(align_loss)([alignment_input,out_feature])
     
     inputs = [adj_input,index_input,val_input,rel_adj,ent_adj]
@@ -139,7 +108,6 @@ model,get_emb = train_model(dropout_rate=dropout_rate,
                           rel_hidden=rel_hidden,
                           lr=lr)
 
-#evaluater = evaluate(dev_pair)
 
 model.summary()
 
@@ -156,17 +124,10 @@ def get_embedding(index_a,index_b):
 
 dev_s = [e1 for e1, e2 in dev_pair]
 dev_t = [e2 for e1, e2 in dev_pair]
-#dev_s = dev_pair[:,0]
-#dev_t = dev_pair[:,1]
 
 np.random.shuffle(dev_s)
 np.random.shuffle(dev_t)
-#print('dev_s=',len(dev_s))
-#print('dev_t=',len(dev_t))
 
-
-#np.random.shuffle(all_s)
-#np.random.shuffle(all_t)
 
 epoch = 6
 for turn in range(5):
@@ -179,12 +140,8 @@ for turn in range(5):
 #       evaluater
         if i==epoch-1:
             Lvec,Rvec,SI = get_embedding(dev_pair[:,0],dev_pair[:,1])
-#            inputs = [adj_matrix,r_index,r_val,rel_matrix,ent_matrix]
-#            inputs = [np.expand_dims(item,axis=0) for item in inputs]
-#            SI = get_emb.predict_on_batch(inputs)
             number = len(dev_pair)
             eval_entity_alignment(dev_pair[:,0],dev_pair[:,1],SI,number)
-#            evaluater.test(Lvec,Rvec)
     new_pair = []
     Lvec,Rvec,vec = get_embedding(dev_s,dev_t)
     inputs = [adj_matrix,r_index,r_val,rel_matrix,ent_matrix]
