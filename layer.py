@@ -124,8 +124,8 @@ class Gate_GraphAttention(Layer):
 
 def align_loss(tensor):
     
-    def squared_dist(x):
-        A,B = x
+        def squared_dist(x):
+            A,B = x
             row_norms_A = tf.reduce_sum(tf.square(A), axis=1)
             row_norms_A = tf.reshape(row_norms_A, [-1, 1])  # Column vector.
             row_norms_B = tf.reduce_sum(tf.square(B), axis=1)
