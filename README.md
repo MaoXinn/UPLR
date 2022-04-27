@@ -39,3 +39,22 @@ The datasets are from [GCN-Align](https://github.com/1049451037/GCN-Align), [JAP
 
 We refer to the codes of these repos: [keras-gat](https://github.com/danielegrattarola/keras-gat), [GCN-Align](https://github.com/1049451037/GCN-Align), [MRAEA](https://github.com/MaoXinn/MRAEA), [AliNet](https://github.com/nju-websoft/AliNet). 
 Thanks for their great contributions!
+
+## Reference
+Please refer to our paper. 
+    @inproceedings{li2022uplr,
+      author = {Li, Jia and Song, Dandan},
+      title = {Uncertainty-Aware Pseudo Label Refinery for Entity Alignment},
+      year = {2022},
+      isbn = {9781450390965},
+      publisher = {Association for Computing Machinery},
+      address = {New York, NY, USA},
+      url = {https://doi.org/10.1145/3485447.3511926},
+      doi = {10.1145/3485447.3511926},
+      booktitle = {Proceedings of the ACM Web Conference 2022},
+      pages = {829–837},
+      numpages = {9},
+      keywords = {Entity Alignment, Knowledge Graph, Unsupervised},
+      location = {Virtual Event, Lyon, France},
+      series = {WWW '22}
+      }
