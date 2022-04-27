@@ -58,3 +58,10 @@ Please refer to our paper.
       location = {Virtual Event, Lyon, France},
       series = {WWW '22}
       }
+    @inproceedings{pei2020rea,
+      title={Rea: Robust cross-lingual entity alignment between knowledge graphs},
+      author={Pei, Shichao and Yu, Lu and Yu, Guoxian and Zhang, Xiangliang},
+      booktitle={Proceedings of the 26th ACM SIGKDD International Conference on Knowledge Discovery \& Data Mining},
+      pages={2175--2184},
+      year={2020}
+    }
