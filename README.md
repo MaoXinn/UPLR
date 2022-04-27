@@ -1,4 +1,4 @@
-# Uncertainty-aware Pseudo Label Refinery for Entity Alignment(https://dl.acm.org/doi/10.1145/3485447.3511926) (WWW,2022)
+# [Uncertainty-aware Pseudo Label Refinery for Entity Alignment](https://dl.acm.org/doi/10.1145/3485447.3511926) (WWW,2022)
 
 ## Datasets
 
