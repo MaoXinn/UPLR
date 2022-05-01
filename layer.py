@@ -122,36 +122,5 @@ class Gate_GraphAttention(Layer):
         return outputs
 
 
-def align_loss(tensor):
-    
-        def squared_dist(x):
-            A,B = x
-            row_norms_A = tf.reduce_sum(tf.square(A), axis=1)
-            row_norms_A = tf.reshape(row_norms_A, [-1, 1])  # Column vector.
-            row_norms_B = tf.reduce_sum(tf.square(B), axis=1)
-            row_norms_B = tf.reshape(row_norms_B, [1, -1])  # Row vector.
-            return row_norms_A + row_norms_B - 2 * tf.matmul(A, B,transpose_b=True)
-        def Gradient(loss):
-            gradient = (loss - K.stop_gradient(K.mean(loss,axis=-1,keepdims=True))) / K.stop_gradient(K.std(loss,axis=-1,keepdims=True))
-            losss = K.logsumexp(30*loss+10,axis=-1)
-            return losss
-        def Matrix(loss,l,r):
-            matrix = loss *(1 - K.one_hot(indices=l,num_classes=node_size) - K.one_hot(indices=r,num_classes=node_size))
-            return Gradient(matrix)
-        
-        
-        emb = tensor[1]
-        ps,pt = K.cast(tensor[0][0,:,0],'int32'),K.cast(tensor[0][0,:,1],'int32')
-        ps_emb,pt_emb = K.gather(reference=emb,indices=ps),K.gather(reference=emb,indices=pt)
-        
-        Lr = K.sum(K.square(ps_emb-pt_emb),axis=-1,keepdims=True)
-        Ls = squared_dist([ps_emb,emb])
-        Lt = squared_dist([pt_emb,emb])
-        LN1 = Lr - Ls + gamma
-        LN2 = Lr - Lt + gamma
-        
-        l_loss = Matrix(LN1,ps,pt)
-        r_loss = Matrix(LN2,ps,pt)
-        return K.mean(l_loss + r_loss)
 
 
